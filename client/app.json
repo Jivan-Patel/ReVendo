@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "ReVendo",
+    "slug": "revendo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/test_logo.png",
+    "userInterfaceStyle": "light",
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/d43093ef-5c76-4a60-8070-2866431a320f"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "description": "ReVendo — best overall marketplace identity.",
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/test_logo.png",
+        "backgroundColor": "#e63c4b"
+      },
+      "package": "com.revendo.marketplace"
+    },
+    "web": {
+      "favicon": "./assets/test_logo.png",
+      "name": "ReVendo — best overall marketplace identity.",
+      "shortName": "ReVendo"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#e63c4b"
+        }
+      ],
+      "expo-notifications",
+      "expo-secure-store",
+      "@bugsnag/plugin-expo-eas-sourcemaps",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ec47c2e8-06c1-47f0-96ab-8f9801174867"
+      },
+      "bugsnag": {
+        "apiKey": "9309e645bca4c80e4943f78dae8a5efd"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "owner": "atakanb"
+  }
+}

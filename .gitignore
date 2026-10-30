@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Expo & Metro
+.expo/
+*/.expo/
+dist/
+*/dist/
+web-build/
+*/web-build/
+
+# Environment & Secrets
+.env
+*/.env
+.env.local
+.env.*.local
+
+# Logs & Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# Uploads & Temp
+uploads/
+*/uploads/
+.DS_Store
+Thumbs.db
+
+# OS / Editor
+.vscode/
+.idea/
