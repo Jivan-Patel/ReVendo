@@ -1,0 +1,177 @@
+import {
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
+import { React, useState } from "react";
+import * as Yup from "yup";
+
+import Screen from "../components/Screen";
+import {
+  AppForm,
+  AppFormField,
+  AppFormPicker,
+  FormConditionPicker,
+  SubmitButton,
+} from "../components/forms";
+import CategoryPickerItem from "../components/CategoryPickerItem";
+import FormImagePicker from "../components/forms/FormImagePicker";
+import useLocation from "../hooks/useLocation";
+import listingsApi from "../api/listings";
+import UploadScreen from "./UploadScreen";
+import TopHeader from "../components/TopHeader";
+
+const validationSchema = Yup.object().shape({
+  title: Yup.string().required().min(1).label("Title"),
+  price: Yup.number().required().min(1).max(10000).label("Price"),
+  description: Yup.string().label("Description"),
+  category: Yup.object().required().nullable().label("Category"),
+  condition: Yup.string().required().label("Condition"),
+  images: Yup.array().min(1, "Please select at least one image."),
+});
+
+const categories = [
+  {
+    label: "Furniture",
+    value: 1,
+    icon: "floor-lamp",
+    backgroundColor: "#fc5c65",
+  },
+  { label: "Cars", value: 2, icon: "car", backgroundColor: "#fd9644" },
+  { label: "Cameras", value: 3, icon: "camera", backgroundColor: "#fed330" },
+  { label: "Games", value: 4, icon: "cards", backgroundColor: "#26de81" },
+  {
+    label: "Clothing",
+    value: 5,
+    icon: "shoe-heel",
+    backgroundColor: "#2bcbba",
+  },
+  { label: "Sports", value: 6, icon: "basketball", backgroundColor: "#45aaf2" },
+  {
+    label: "Movies & Music",
+    value: 7,
+    icon: "headphones",
+    backgroundColor: "#4b7bec",
+  },
+  {
+    label: "Books",
+    value: 8,
+    icon: "book-open-blank-variant",
+    backgroundColor: "#884ab4",
+  },
+  {
+    label: "Other",
+    value: 9,
+    icon: "page-layout-header",
+    backgroundColor: "#5e6f81",
+  },
+];
+
+export default function ListingEditScreen({ navigation }) {
+  const location = useLocation();
+
+  //TODO: DONE check out the source control for bugs!
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadVisible, setUploadVisible] = useState(false);
+
+  const handleSubmit = async (listing, { resetForm }) => {
+    setUploadProgress(0);
+    setUploadVisible(true);
+    const result = await listingsApi.postListings(
+      { ...listing, location }, //FIXME: FIXED include the location data later
+      (uploadProgress) => setUploadProgress(uploadProgress)
+    );
+
+    if (!result.ok) {
+      setUploadVisible(false);
+      return alert("Couldn't save the listing"); //FIXME: STILL causing error while uploading too many images.
+    }
+
+    resetForm();
+  };
+
+  return (
+    <Screen style={styles.container}>
+      <TopHeader title="Post a Listing" navigation={navigation} />
+      <UploadScreen //FIXME: FIXED(with flex:1) done.json not shown on screen fully
+        onDone={() => {
+          setUploadVisible(false);
+        }}
+        visible={uploadVisible}
+        progress={uploadProgress}
+      />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollContent}
+        >
+          <AppForm
+            initialValues={{
+              title: "",
+              price: "", //It must be string
+              description: "",
+              category: null,
+              condition: "Brand New",
+              images: [],
+            }}
+            onSubmit={handleSubmit}
+            validationSchema={validationSchema}
+          >
+            <FormImagePicker
+              name="images"
+              //FIXME: FIXED image not shown on screen and can't delete!
+            />
+            <AppFormField
+              maxLength={255}
+              name="title"
+              placeholder="Title"
+              //FIXME: FIXED Not reseting
+            />
+            <AppFormField
+              containerWidth="35%"
+              keyboardType="numeric"
+              maxLength={8} //TODO: max 9999.99 increase the value later
+              name="price"
+              placeholder="Price (₹)"
+              //FIXME: FIXED Not reseting
+            />
+            <AppFormPicker
+              numColumns={3}
+              containerWidth="55%"
+              items={categories}
+              name="category"
+              PickerItemComponent={CategoryPickerItem}
+              placeholder="Category"
+            />
+            <FormConditionPicker name="condition" />
+            <AppFormField
+              maxLength={255}
+              multiline
+              name="description"
+              numberOfLines={2}
+              placeholder="Description"
+              //FIXME: FIXED Not reseting
+            />
+            <SubmitButton title="Post" />
+          </AppForm>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 10,
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+});
